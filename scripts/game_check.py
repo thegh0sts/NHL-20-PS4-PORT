@@ -33,6 +33,11 @@ SUPPORTED = {
     '034dcb0272413fe0f90ed5547fb954e49895c8df65196f2e5743419bef105741': dict(
         name='nhl21', title='CUSA18182', version='01.10', game='NHL 21', update='CUSA18182-patch',
         modules=('libc.prx', 'libSceFios2.prx'), patches=False),
+    # NHL 20 CUSA15439 (US, UP0006) 1.00 (the base game), SDK 6.508: between NHL 19 and 21, set up
+    # like them.
+    '84a105f2ddf0d85b4c724eabb62d9d862a6c089ba8db5d84840171e7f35b9935': dict(
+        name='nhl20', title='CUSA15439', version='01.00', game='NHL 20', update='CUSA15439-patch',
+        modules=('libc.prx', 'libSceFios2.prx'), patches=False),
 }
 BY_TITLE = {p['title']: p for p in SUPPORTED.values()}
 # Images that are known NOT to be 1.14: the base game's executable (1.00). With a 1.14 param.sfo
