@@ -71,7 +71,7 @@ std::mutex prompt_mutex;
 std::atomic<bool> prompt_active{false};
 std::string prompt_title, prompt_text;
 
-// Holding ○ (the pad's right face button) for HoldQuitSeconds asks "Quit NHL 21?": ✕ quits,
+// Holding ○ (the pad's right face button) for HoldQuitSeconds asks "Quit NHL 20?": ✕ quits,
 // ○ goes back. A short press of ○ still reaches the game as Back. BB_HOLD_CIRCLE_QUIT=0 turns it off.
 // quit_state: 0 none, 1 the question is shown, 2 closed, kept from the game until ○ is let go
 // (otherwise the game would see ○ still held and go back a screen).
@@ -747,7 +747,7 @@ void QuitPrompt() {
                  ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
                      ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoNav |
                      ImGuiWindowFlags_NoFocusOnAppearing);
-    ImGui::TextUnformatted(BbSettings::MenuText("Quit NHL 21?", "Выйти из NHL 21?"));
+    ImGui::TextUnformatted(BbSettings::MenuText("Quit NHL 20?", "Выйти из NHL 20?"));
     ImGui::Separator();
     ImGui::TextUnformatted(BbSettings::MenuText("Cross / A (Enter) = Yes      Circle / B (Esc) = No",
                                                 "Крест / A (Enter) = Да      Круг / B (Esc) = Нет"));

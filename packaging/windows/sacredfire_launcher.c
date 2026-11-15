@@ -810,18 +810,18 @@ static DWORD play_impl(const wchar_t *const *extra, int extra_count) {
     wchar_t eboot[PATHW]; join(eboot, PATHW, game, L"eboot.bin");
     if (!game[0] || !exists(eboot)) {
         wchar_t m[PATHW + 128];
-        _snwprintf(m, PATHW + 128, L"No eboot.bin in \"%ls\": choose the game folder (CUSA18182, with CUSA18182-patch beside it or merged in).", game);
+        _snwprintf(m, PATHW + 128, L"No eboot.bin in \"%ls\": choose the game folder (CUSA15439, with CUSA15439-patch beside it or merged in).", game);
         m[PATHW + 127] = 0; fail(m); return 2;
     }
-    /* Base and update side by side (CUSA18182 + CUSA18182-patch, as PKG extractors leave them):
-     * merge_update.py links them into CUSA18182-merged once, and that folder is played. */
+    /* Base and update side by side (CUSA15439 + CUSA15439-patch, as PKG extractors leave them):
+     * merge_update.py links them into CUSA15439-merged once, and that folder is played. */
     static wchar_t merged_game[PATHW];
     {
         static char merged[PATHW * 3];
         const wchar_t *args[] = {game};
         if (script(L"scripts", L"merge_update.py", args, 1, merged, sizeof(merged))) {
             logf("%s", merged);
-            fail(L"Merging the 1.10 update into the game folder failed (see the log).");
+            fail(L"Merging the 1.20 update into the game folder failed (see the log).");
             return 2;
         }
         /* The folder is the last line (progress lines come before it). */
@@ -839,13 +839,13 @@ static DWORD play_impl(const wchar_t *const *extra, int extra_count) {
         if (script(L"scripts", L"game_check.py", args, 1, profile, sizeof(profile))) {
             logf("%s", profile);
             fail(strstr(profile, "missing or damaged")
-                 ? L"The game check failed (see the log): some game files are missing or damaged. Extract the game and the 1.10 update again."
-                 : L"The game check failed (see the log): the folder is not NHL 21 CUSA18182 (Europe) with the 1.10 update (CUSA18182-patch) beside it or merged in.");
+                 ? L"The game check failed (see the log): some game files are missing or damaged. Extract the game and the 1.20 update again."
+                 : L"The game check failed (see the log): the folder is not NHL 20 CUSA15439 (North America) with the 1.20 update (CUSA15439-patch) beside it or merged in.");
             return 2;
         }
         trim(profile);
     }
-    if (!profile[0]) snprintf(profile, sizeof(profile), "nhl21");
+    if (!profile[0]) snprintf(profile, sizeof(profile), "nhl20");
     /* The update's build (5.05, 6.72+ or ?): the address-keyed diagnostics know the 5.05 build only. */
     {
         char variant[64] = "?";
@@ -885,7 +885,7 @@ static DWORD play_impl(const wchar_t *const *extra, int extra_count) {
     const wchar_t *patches_dir_used = given_env(L"BB_PATCHES_DIR") ? given_env(L"BB_PATCHES_DIR") : patches_dir;
     const wchar_t *patches_config_used = given_env(L"BB_PATCHES_CONFIG") ? given_env(L"BB_PATCHES_CONFIG") : patches_config;
     const wchar_t *patch_args[] = {L"--patches-dir", patches_dir_used, L"--patches-config", patches_config_used,
-                                   L"--app-version", L"01.10", L"--title-id", L"CUSA18182", L"--out", out, L"--settings", config};
+                                   L"--app-version", L"01.20", L"--title-id", L"CUSA15439", L"--out", out, L"--settings", config};
     if (script(L"scripts", L"patches.py", patch_args, 12, NULL, 0)) { fail(L"patches.py failed (see the log)"); return 2; }
     /* The count of guest TCB loads the linker rewrote (link.json fs_loads_patched): the game
      * executable cross-checks its own scan against it. */
@@ -990,21 +990,21 @@ static DWORD play_impl(const wchar_t *const *extra, int extra_count) {
     SetEnvironmentVariableW(L"BB_UFFD", L"0");            /* Linux only */
     SetEnvironmentVariableW(L"BB_GUEST_IN_PLACE", L"0");  /* dma-buf memory model: Linux only */
     /* env_or keeps 8 values at a time: two lines. */
-    logw(L"NHL 21: output %lsx%ls, frame limit %ls (0: none), present mode %ls, fullscreen %ls\n",
+    logw(L"NHL 20: output %lsx%ls, frame limit %ls (0: none), present mode %ls, fullscreen %ls\n",
          env_or(L"BB_INTERNAL_WIDTH", L"?"), env_or(L"BB_INTERNAL_HEIGHT", L"?"), env_or(L"BB_FPS_LIMIT", L"?"),
          env_or(L"BB_PRESENT_MODE", L"?"), env_or(L"BB_FULLSCREEN", L"0"));
-    logw(L"NHL 21: player name \"%ls\", language %ls (BB_LANGUAGE)\n", env_or(L"BB_USER_NAME", L"Player 1"), env_or(L"BB_LANGUAGE", L"1"));
+    logw(L"NHL 20: player name \"%ls\", language %ls (BB_LANGUAGE)\n", env_or(L"BB_USER_NAME", L"Player 1"), env_or(L"BB_LANGUAGE", L"1"));
     {
         const wchar_t *server = env_or(L"BB_ONLINE_SERVER", L"");
-        if (server[0]) logw(L"NHL 21: online server %ls (BB_ONLINE_SERVER)\n", server); else logw(L"NHL 21: offline (no BB_ONLINE_SERVER)\n");
+        if (server[0]) logw(L"NHL 20: online server %ls (BB_ONLINE_SERVER)\n", server); else logw(L"NHL 20: offline (no BB_ONLINE_SERVER)\n");
     }
     if (experiment)
         logw(L"4K/2K experimental: in game choose VIDEO -> Favor Resolution (the scene grows only with it). %ls scene, PS4 Pro %ls, "
              L"patches %ls\n", resolution_names[settings.resolution], env_or(L"BB_NEO", L"?"), patches_dir_used);
-    logw(L"NHL 21: window %ls, FSR 1.0 %ls, RCAS %ls (attenuation %ls), readbacks %ls (2 = precise)\n",
+    logw(L"NHL 20: window %ls, FSR 1.0 %ls, RCAS %ls (attenuation %ls), readbacks %ls (2 = precise)\n",
          env_or(L"BB_WINDOW_SIZE", L"= output"), env_or(L"BB_FSR1", L"0"), env_or(L"BB_RCAS", L"?"), env_or(L"BB_RCAS_ATTENUATION", L"?"), env_or(L"BB_READBACKS", L"?"));
     if (settings.clear_cache || !wcscmp(env_or(L"BB_CLEAR_SHADER_CACHE", L"0"), L"1")) {
-        wchar_t cache[PATHW]; join(cache, PATHW, env_or(L"BB_USER_DIR", user_dir), L"cache\\CUSA18182");
+        wchar_t cache[PATHW]; join(cache, PATHW, env_or(L"BB_USER_DIR", user_dir), L"cache\\CUSA15439");
         if (exists(cache)) {
             wchar_t command[PATHW + 64]; _snwprintf(command, PATHW + 64, L"cmd.exe /c rd /s /q \"%ls\"", cache); command[PATHW + 63] = 0;
             run(command, NULL, 0, 0, INFINITE);
@@ -1373,9 +1373,9 @@ static void paint_window(HDC dc, RECT client) {
     }
     RECT t = {text_x, sx(26), client.right - sx(16), sx(66)};
     SelectObject(dc, font_title); SetTextColor(dc, C_GOLD);
-    DrawTextW(dc, L"NHL 21 \x2014 native PC port", -1, &t, DT_SINGLELINE | DT_LEFT | DT_BOTTOM | DT_NOPREFIX | DT_END_ELLIPSIS);
+    DrawTextW(dc, L"NHL 20 \x2014 native PC port", -1, &t, DT_SINGLELINE | DT_LEFT | DT_BOTTOM | DT_NOPREFIX | DT_END_ELLIPSIS);
     char version[256]; read_version(version, sizeof(version));
-    wchar_t line[160]; _snwprintf(line, 160, L"PS4 CUSA18182 \x00B7 SacredFire %hs \x00B7 your own game dump required", version); line[159] = 0;
+    wchar_t line[160]; _snwprintf(line, 160, L"PS4 CUSA15439 \x00B7 SacredFire %hs \x00B7 your own game dump required", version); line[159] = 0;
     t.top = sx(70); t.bottom = sx(90);
     SelectObject(dc, ui_font); SetTextColor(dc, C_TEXT_DIM);
     DrawTextW(dc, line, -1, &t, DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS);
@@ -1655,7 +1655,7 @@ static void controls_open(void) {
     static int registered;
     if (!registered) {
         WNDCLASSW wc = {.lpfnWndProc = ctl_proc, .hInstance = GetModuleHandleW(NULL), .hCursor = LoadCursorW(NULL, IDC_ARROW),
-                        .hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1), .lpszClassName = L"NHL21NativeControls"};
+                        .hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1), .lpszClassName = L"NHL20NativeControls"};
         RegisterClassW(&wc);
         registered = 1;
     }
@@ -1663,7 +1663,7 @@ static void controls_open(void) {
     const int rows_h = 26, top = 40, client_w = 640, client_h = top + CTL_INPUTS * rows_h + 56;
     RECT r = {0, 0, sx(client_w), sx(client_h)};
     AdjustWindowRect(&r, WS_CAPTION | WS_SYSMENU, FALSE);
-    ctl_window = CreateWindowExW(WS_EX_DLGMODALFRAME, L"NHL21NativeControls", L"Controls", WS_CAPTION | WS_SYSMENU | WS_POPUP,
+    ctl_window = CreateWindowExW(WS_EX_DLGMODALFRAME, L"NHL20NativeControls", L"Controls", WS_CAPTION | WS_SYSMENU | WS_POPUP,
                                  CW_USEDEFAULT, CW_USEDEFAULT, r.right - r.left, r.bottom - r.top, main_window, NULL,
                                  GetModuleHandleW(NULL), NULL);
     if (!ctl_window) return;
@@ -1899,7 +1899,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message, WPARAM wparam, LP
         else if (id == ID_MODE && code == CBN_SELCHANGE) online_controls();
         else if (id == ID_HOSTSCAN && !running) fill_host_addresses();
         else if (id == ID_COPYHOST) copy_host_address();
-        else if (id == ID_BROWSE) { wchar_t folder[PATHW]; if (pick_folder(L"The game folder (CUSA18182; CUSA18182-patch beside it is merged automatically)", folder)) {
+        else if (id == ID_BROWSE) { wchar_t folder[PATHW]; if (pick_folder(L"The game folder (CUSA15439; CUSA15439-patch beside it is merged automatically)", folder)) {
             SetWindowTextW(control(ID_GAME), folder);
             banner_load(folder); RECT banner = {0, 0, sx(CLIENT_W), sx(BANNER_H)}; InvalidateRect(window, &banner, FALSE);
         } }
@@ -2014,18 +2014,18 @@ static int gui(HINSTANCE instance, const wchar_t *const *extra, int extra_count)
     brush_background = CreateSolidBrush(C_BACKGROUND); brush_panel = CreateSolidBrush(C_PANEL);
     brush_input = CreateSolidBrush(C_INPUT); brush_log = CreateSolidBrush(C_LOG);
     WNDCLASSW wc = {.lpfnWndProc = window_proc, .hInstance = instance, .hCursor = LoadCursorW(NULL, IDC_ARROW),
-                    .hbrBackground = brush_background, .lpszClassName = L"NHL21NativeLauncher", .hIcon = LoadIconW(instance, MAKEINTRESOURCEW(1))};
+                    .hbrBackground = brush_background, .lpszClassName = L"NHL20NativeLauncher", .hIcon = LoadIconW(instance, MAKEINTRESOURCEW(1))};
     RegisterClassW(&wc);
     const DWORD style = (WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX) | WS_CLIPCHILDREN;
     /* The client area is CLIENT_W x CLIENT_H at 96 DPI: the window is created, measured, and
      * resized by the difference (the frame metrics of the running system, whatever they are). */
     const int client_w = sx(CLIENT_W), client_h = sx(CLIENT_H);
 #if defined(UFC3_WRITE_WINDOWS_TEST)
-    const wchar_t *window_title = L"NHL 21 - native PC port (UFC-48 write windows test)";
+    const wchar_t *window_title = L"NHL 20 - native PC port (UFC-48 write windows test)";
 #elif defined(UFC3_DIAGNOSTIC_PACKAGE)
-    const wchar_t *window_title = L"NHL 21 - native PC port (Windows diagnostic test)";
+    const wchar_t *window_title = L"NHL 20 - native PC port (Windows diagnostic test)";
 #else
-    const wchar_t *window_title = L"NHL 21 - native PC port";
+    const wchar_t *window_title = L"NHL 20 - native PC port";
 #endif
     main_window = CreateWindowExW(0, wc.lpszClassName, window_title, style, CW_USEDEFAULT, CW_USEDEFAULT, client_w + 16, client_h + 64,
                                   NULL, NULL, instance, NULL);
@@ -2077,7 +2077,7 @@ static int gui(HINSTANCE instance, const wchar_t *const *extra, int extra_count)
     }
     /* GAME (left column; content x 28..430) */
     int y = 134 + 34;
-    label(L"Game folder (CUSA18182, with CUSA18182-patch beside it)", 28, y, 402); y += 26;
+    label(L"Game folder (CUSA15439, with CUSA15439-patch beside it)", 28, y, 402); y += 26;
     edit(settings.game, 28, y, 306, ID_GAME);
     button(L"Browse...", 342, y, 88, 24, ID_BROWSE); y += 32;
     label(L"Player name", 28, y, 118);
@@ -2212,7 +2212,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous, PWSTR command_line, 
     else {
         PWSTR local = NULL;
         if (FAILED(SHGetKnownFolderPath(&FOLDERID_LocalAppData, 0, NULL, &local))) { fail(L"no %LOCALAPPDATA%"); return 2; }
-        join(data, PATHW, local, L"NHL21Native"); CoTaskMemFree(local);
+        join(data, PATHW, local, L"NHL20Native"); CoTaskMemFree(local);
     }
 #endif
     ensure_directory(data);

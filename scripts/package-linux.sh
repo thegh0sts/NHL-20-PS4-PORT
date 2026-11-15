@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# NHL 21: dist/NHL21Native-linux-x86_64.tar.gz from the current Linux build (bash build.sh first).
+# NHL 20: dist/NHL20Native-linux-x86_64.tar.gz from the current Linux build (bash build.sh first).
 # The program's libraries (an SDL3 built here, fmt, miniz, xxhash, Zydis, libstdc++, libgcc_s) go
 # to bin/lib; glibc, Vulkan and the window system come from the system. Every ELF is checked for
 # its newest glibc symbol version (BB_GLIBC_MAX, default 2.38; BB_ALLOW_NEWER_GLIBC=1 only warns).
 # A dirty or untagged checkout is refused unless BB_ALLOW_DIRTY=1.
 #   BB_SDL_SRC   SDL source tree (default out/windows/deps/src/SDL, from scripts/windows/fetch-deps.sh)
 #   BB_AEROLIB   aerolib.inl to ship (default: out/windows/downloads/aerolib.inl or out/aerolib.inl)
-#   BB_PRODUCT   the package's name (default NHL21Native)
+#   BB_PRODUCT   the package's name (default NHL20Native)
 set -euo pipefail
 cd -- "$(dirname -- "$0")/.."
-product=${BB_PRODUCT:-NHL21Native}
+product=${BB_PRODUCT:-NHL20Native}
 [[ -f out/sacredfire && -f out/gpu/libbbgpu.so && -f out/VERSION ]] || { echo 'Build first: bash build.sh' >&2; exit 1; }
 built_from=$(cat out/VERSION)
 checkout=$(git describe --tags --match 'v*' --always 2>/dev/null || echo unknown)
@@ -53,8 +53,8 @@ set_rpath '$ORIGIN/gpu:$ORIGIN/lib' "$stage/bin/sacredfire"
 set_rpath '$ORIGIN/lib' "$stage/bin/bb-gpu-capabilities"
 set_rpath '$ORIGIN/../lib' "$stage/bin/gpu/libbbgpu.so"
 for f in "$stage"/bin/lib/*.so*; do set_rpath '$ORIGIN' "$f"; done
-install -m755 run.sh packaging/linux/nhl21.sh "$stage/"
-cp packaging/linux/nhl21.conf.example packaging/linux/README-Linux.md LICENSE "$stage/"
+install -m755 run.sh packaging/linux/nhl20.sh "$stage/"
+cp packaging/linux/nhl20.conf.example packaging/linux/README-Linux.md LICENSE "$stage/"
 cp out/VERSION "$stage/VERSION"
 cp scripts/*.py "$stage/scripts/"; cp tools/gen_import_names.py tools/module_imports.py "$stage/tools/"
 find patches -maxdepth 1 -type f -name '*.xml' -exec cp {} "$stage/patches/" \;

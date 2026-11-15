@@ -1,4 +1,4 @@
-# NHL 21: the Linux test build (tar.gz and AppImage), source only (no game data).
+# NHL 20: the Linux test build (tar.gz and AppImage), source only (no game data).
 # Runs on demand (Actions > linux > Run workflow: the files are kept as a workflow artifact) and
 # for tags like v0.1.0-linux-test1, which also publish a GitHub pre-release with the files and
 # docs/release-notes/linux-test.md as its notes.
@@ -69,26 +69,26 @@ jobs:
           BB_SDL_SRC=out/sdl-src BB_AEROLIB=out/aerolib.inl BB_ALLOW_NEWER_GLIBC=1 BB_ALLOW_DIRTY=${{ github.ref_type != 'tag' && '1' || '' }} \
             bash scripts/package-linux.sh
           APPIMAGETOOL=$PWD/out/appimagetool bash scripts/package-appimage.sh
-          cat dist/NHL21Native-linux-x86_64.build.txt
+          cat dist/NHL20Native-linux-x86_64.build.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: NHL21Native-linux-x86_64
+          name: NHL20Native-linux-x86_64
           path: |
-            dist/NHL21Native-x86_64.AppImage
-            dist/NHL21Native-x86_64.AppImage.sha256
-            dist/NHL21Native-linux-x86_64.tar.gz
-            dist/NHL21Native-linux-x86_64.tar.gz.sha256
-            dist/NHL21Native-linux-x86_64.build.txt
+            dist/NHL20Native-x86_64.AppImage
+            dist/NHL20Native-x86_64.AppImage.sha256
+            dist/NHL20Native-linux-x86_64.tar.gz
+            dist/NHL20Native-linux-x86_64.tar.gz.sha256
+            dist/NHL20Native-linux-x86_64.build.txt
       - name: Pre-release
         if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
         with:
           prerelease: true
-          name: NHL 21 port ${{ github.ref_name }} (Linux test)
+          name: NHL 20 port ${{ github.ref_name }} (Linux test)
           body_path: docs/release-notes/linux-test.md
           files: |
-            dist/NHL21Native-x86_64.AppImage
-            dist/NHL21Native-x86_64.AppImage.sha256
-            dist/NHL21Native-linux-x86_64.tar.gz
-            dist/NHL21Native-linux-x86_64.tar.gz.sha256
-            dist/NHL21Native-linux-x86_64.build.txt
+            dist/NHL20Native-x86_64.AppImage
+            dist/NHL20Native-x86_64.AppImage.sha256
+            dist/NHL20Native-linux-x86_64.tar.gz
+            dist/NHL20Native-linux-x86_64.tar.gz.sha256
+            dist/NHL20Native-linux-x86_64.build.txt

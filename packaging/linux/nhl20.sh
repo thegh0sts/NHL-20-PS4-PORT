@@ -1,47 +1,47 @@
 #!/usr/bin/env bash
-# NHL 21 native port (Linux test release). Usage:
-#   ./nhl21.sh /path/to/CUSA18182   the first time: your game folder (CUSA18182-patch beside it
+# NHL 20 native port (Linux test release). Usage:
+#   ./nhl20.sh /path/to/CUSA15439   the first time: your game folder (CUSA15439-patch beside it
 #                                   is merged in automatically); it is remembered
-#   ./nhl21.sh                      later: plays with the remembered folder (a folder picker opens
+#   ./nhl20.sh                      later: plays with the remembered folder (a folder picker opens
 #                                   when none is remembered and zenity or kdialog is installed)
-# Settings: ~/.local/share/NHL21Native/nhl21.conf (KEY=value; the environment wins).
-# Saves and the shader cache: ~/.local/share/NHL21Native/user. Logs: a logs folder beside this
-# script (or the AppImage), or ~/.local/share/NHL21Native/logs when that one can't be written.
+# Settings: ~/.local/share/NHL20Native/nhl20.conf (KEY=value; the environment wins).
+# Saves and the shader cache: ~/.local/share/NHL20Native/user. Logs: a logs folder beside this
+# script (or the AppImage), or ~/.local/share/NHL20Native/logs when that one can't be written.
 set -euo pipefail
 here=$(cd -- "$(dirname -- "$0")" && pwd)
 [[ ${1:-} == --play ]] && shift   # accepted for the launchers of the UFC 3 port
-data=${BB_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/NHL21Native}
+data=${BB_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/NHL20Native}
 mkdir -p "$data"
 say() {  # a message on the terminal, and in a dialog when started from a desktop or Steam
-    echo "NHL 21: $1" >&2
+    echo "NHL 20: $1" >&2
     if [[ ! -t 2 ]]; then
-        if command -v zenity >/dev/null; then zenity --error --title 'NHL 21' --text "$1" 2>/dev/null || true
-        elif command -v kdialog >/dev/null; then kdialog --title 'NHL 21' --error "$1" 2>/dev/null || true; fi
+        if command -v zenity >/dev/null; then zenity --error --title 'NHL 20' --text "$1" 2>/dev/null || true
+        elif command -v kdialog >/dev/null; then kdialog --title 'NHL 20' --error "$1" 2>/dev/null || true; fi
     fi
 }
 command -v python3 >/dev/null || { say 'python3 is needed: install it with your package manager.'; exit 1; }
-[[ -f $data/nhl21.conf ]] || cp "$here/nhl21.conf.example" "$data/nhl21.conf"
+[[ -f $data/nhl20.conf ]] || cp "$here/nhl20.conf.example" "$data/nhl20.conf"
 if [[ $# -gt 0 && -d $1 ]]; then
     game=$(cd -- "$1" && pwd); shift
 elif [[ -f $data/game-folder ]]; then
     game=$(cat "$data/game-folder")
 elif command -v zenity >/dev/null; then
-    game=$(zenity --file-selection --directory --title 'NHL 21: choose your game folder (CUSA18182)' 2>/dev/null) || exit 1
+    game=$(zenity --file-selection --directory --title 'NHL 20: choose your game folder (CUSA15439)' 2>/dev/null) || exit 1
 elif command -v kdialog >/dev/null; then
-    game=$(kdialog --getexistingdirectory "$HOME" --title 'NHL 21: choose your game folder (CUSA18182)' 2>/dev/null) || exit 1
+    game=$(kdialog --getexistingdirectory "$HOME" --title 'NHL 20: choose your game folder (CUSA15439)' 2>/dev/null) || exit 1
 else
     sed -n '2,6p' "$0" | sed 's/^# \{0,1\}//' >&2; exit 1
 fi
-[[ -f $game/eboot.bin ]] || { say "no eboot.bin in $game: choose the CUSA18182 folder of your dump."; rm -f "$data/game-folder"; exit 1; }
+[[ -f $game/eboot.bin ]] || { say "no eboot.bin in $game: choose the CUSA15439 folder of your dump."; rm -f "$data/game-folder"; exit 1; }
 printf '%s\n' "$game" > "$data/game-folder"
-game=$(python3 "$here/scripts/merge_update.py" "$game" | tail -1) || { say 'merging the 1.10 update into the game folder failed.'; exit 1; }
-# nhl21.conf: KEY=value lines; a variable already set in the environment wins.
+game=$(python3 "$here/scripts/merge_update.py" "$game" | tail -1) || { say 'merging the 1.20 update into the game folder failed.'; exit 1; }
+# nhl20.conf: KEY=value lines; a variable already set in the environment wins.
 while IFS= read -r line || [[ -n $line ]]; do
     [[ $line =~ ^([A-Z][A-Z0-9_]*)=(.*)$ ]] || continue
     key=${BASH_REMATCH[1]} value=${BASH_REMATCH[2]}
     [[ -n $value && -z ${!key+x} ]] && export "$key=$value"
-done < "$data/nhl21.conf"
-# Logs beside the AppImage (or this script), as NHL21.exe does on Windows; the data folder when
+done < "$data/nhl20.conf"
+# Logs beside the AppImage (or this script), as NHL20.exe does on Windows; the data folder when
 # that one can't be written (an AppImage in a read-only place, a system install).
 if [[ -z ${BB_LOG_DIR:-} ]]; then
     beside=$here; [[ -n ${APPIMAGE:-} ]] && beside=$(dirname -- "$APPIMAGE")

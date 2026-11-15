@@ -1,7 +1,7 @@
-# NHL 21 native PC port — Linux (test build)
+# NHL 20 native PC port — Linux (test build)
 
-This package runs **EA SPORTS NHL 21** (PlayStation 4, `CUSA18182`, Europe, update **1.10**) as a native
-Linux program. It is built from the [NHL 21 port](https://github.com/thegh0sts/NHL-21-PS4-PORT)
+This package runs **EA SPORTS NHL 20** (PlayStation 4, `CUSA15439`, North America, update **1.20**) as a native
+Linux program. It is built from the [NHL 20 port](https://github.com/thegh0sts/NHL-20-PS4-PORT)
 and **contains no game files**: you need your own PS4 copy of the game, dumped from your own console.
 
 This Linux build is a **test**: the developer has no Linux PC, so it has only been compiled. Please
@@ -11,18 +11,18 @@ report how it went, even if it worked.
 
 - Linux x86-64 with Python 3 and an up-to-date Vulkan 1.3 driver (Mesa for AMD and Intel, the
   proprietary driver for NVIDIA). On a Steam Deck, use desktop mode for the first start.
-- The game: the base folder `CUSA18182` and the 1.10 update next to it, e.g. `CUSA18182` and
-  `CUSA18182-patch` (also `-PATCH`, `-update`, `_patch`). They are merged automatically into
-  `CUSA18182-merged` with hard links (no extra space). A folder with the update already merged in
+- The game: the base folder `CUSA15439` and the 1.20 update next to it, e.g. `CUSA15439` and
+  `CUSA15439-patch` (also `-PATCH`, `-update`, `_patch`). They are merged automatically into
+  `CUSA15439-merged` with hard links (no extra space). A folder with the update already merged in
   works too.
 
 ## Starting
 
-AppImage: make `NHL21Native-x86_64.AppImage` executable and run it. tar.gz: unpack it and run
-`./nhl21.sh`. The first time, choose your `CUSA18182` folder (a picker opens with zenity or kdialog
+AppImage: make `NHL20Native-x86_64.AppImage` executable and run it. tar.gz: unpack it and run
+`./nhl20.sh`. The first time, choose your `CUSA15439` folder (a picker opens with zenity or kdialog
 installed), or pass it on the command line:
 
-    ./nhl21.sh /path/to/CUSA18182
+    ./nhl20.sh /path/to/CUSA15439
 
 It is remembered. The first start prepares the game (a minute or so), and the first match builds
 the shader cache, so its loading screen can take a minute or two.
@@ -33,15 +33,15 @@ mode (not tested yet).
 ## In game
 
 - **Insert**, or **L3+R3** on a controller: the overlay, to change settings while you play
-- **Hold ○ (B on Xbox) for 2 seconds** on any screen: "Quit NHL 21?" — ✕ / A (or Enter) quits,
+- **Hold ○ (B on Xbox) for 2 seconds** on any screen: "Quit NHL 20?" — ✕ / A (or Enter) quits,
   ○ / B (or Esc) goes back to the game
 
 ## Files
 
-- Settings: `~/.local/share/NHL21Native/nhl21.conf` (KEY=value lines; any `BB_*` variable set when
+- Settings: `~/.local/share/NHL20Native/nhl20.conf` (KEY=value lines; any `BB_*` variable set when
   starting wins)
-- Saves and the shader cache: `~/.local/share/NHL21Native/user`
-- Logs: a `logs` folder beside the AppImage or `nhl21.sh` (or `~/.local/share/NHL21Native/logs` if
+- Saves and the shader cache: `~/.local/share/NHL20Native/user`
+- Logs: a `logs` folder beside the AppImage or `nhl20.sh` (or `~/.local/share/NHL20Native/logs` if
   that one can't be written)
 
 ## Problems

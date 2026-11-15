@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Wrap the Linux tar.gz (scripts/package-linux.sh) into an AppImage, without rebuilding or
-# changing its contents. BB_PRODUCT: the package's name (default NHL21Native).
+# changing its contents. BB_PRODUCT: the package's name (default NHL20Native).
 set -euo pipefail
 cd -- "$(dirname -- "$0")/.."
-product=${BB_PRODUCT:-NHL21Native}
+product=${BB_PRODUCT:-NHL20Native}
 tool=${APPIMAGETOOL:-appimagetool}
 tool=$(command -v -- "$tool") || {
     echo 'package-appimage: appimagetool is required. Install it on PATH, or set APPIMAGETOOL=/absolute/path/to/appimagetool (an executable x86_64 AppImage also works).' >&2
@@ -21,7 +21,7 @@ appdir=$work/$product.AppDir
 mkdir -p "$appdir/usr/lib"
 tar -xzf "$archive" -C "$appdir/usr/lib"
 payload=$appdir/usr/lib/$product
-for entry in nhl21.sh run.sh scripts/prepare.py scripts/merge_update.py bin/sacredfire; do
+for entry in nhl20.sh run.sh scripts/prepare.py scripts/merge_update.py bin/sacredfire; do
     [[ -f $payload/$entry ]] || { echo "package-appimage: Linux archive is missing $entry" >&2; exit 1; }
 done
 install -m755 packaging/linux/AppRun "$appdir/AppRun"

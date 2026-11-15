@@ -33,10 +33,9 @@ SUPPORTED = {
     '034dcb0272413fe0f90ed5547fb954e49895c8df65196f2e5743419bef105741': dict(
         name='nhl21', title='CUSA18182', version='01.10', game='NHL 21', update='CUSA18182-patch',
         modules=('libc.prx', 'libSceFios2.prx'), patches=False),
-    # NHL 20 CUSA15439 (US, UP0006) 1.00 (the base game), SDK 6.508: between NHL 19 and 21, set up
-    # like them.
-    '84a105f2ddf0d85b4c724eabb62d9d862a6c089ba8db5d84840171e7f35b9935': dict(
-        name='nhl20', title='CUSA15439', version='01.00', game='NHL 20', update='CUSA15439-patch',
+    # NHL 20 CUSA15439 (US, UP0006) 1.20, SDK 6.508: between NHL 19 and 21, set up like them.
+    'ff57ba7fbf7fc1d056aeded9e5eea9bceced7b516933c3ad735bf3da95eb6e68': dict(
+        name='nhl20', title='CUSA15439', version='01.20', game='NHL 20', update='CUSA15439-patch',
         modules=('libc.prx', 'libSceFios2.prx'), patches=False),
 }
 BY_TITLE = {p['title']: p for p in SUPPORTED.values()}
@@ -44,6 +43,8 @@ BY_TITLE = {p['title']: p for p in SUPPORTED.values()}
 # these mean the update's eboot.bin was not copied in.
 OLD_IMAGES = {
     '1dc99716a77f5411834d004d6becc3c829e382a244aa0dcbd63932a7eeee0bf1': '01.00',
+    # NHL 20's base game (1.00): with 1.20's param.sfo, the update's eboot.bin is missing.
+    '84a105f2ddf0d85b4c724eabb62d9d862a6c089ba8db5d84840171e7f35b9935': '01.00',
 }
 # Other builds of the supported update (none known for UFC 3).
 KNOWN_672 = set()

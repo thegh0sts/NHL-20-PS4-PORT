@@ -1,5 +1,5 @@
-# NHL 21 settings: KEY=value, one per line (an empty value keeps the default).
-# A variable set in the environment when starting nhl21.sh wins over this file.
+# NHL 20 settings: KEY=value, one per line (an empty value keeps the default).
+# A variable set in the environment when starting nhl20.sh wins over this file.
 
 # Fullscreen: 1 on, 0 windowed
 BB_FULLSCREEN=0
@@ -23,5 +23,5 @@ BB_LANGUAGE=1
 BB_DISPLAY=
 # PS4 Pro mode: 1 on
 BB_NEO=0
-# Holding Circle for 2 seconds asks "Quit NHL 21?": 0 turns it off
+# Holding Circle for 2 seconds asks "Quit NHL 20?": 0 turns it off
 BB_HOLD_CIRCLE_QUIT=1

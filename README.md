@@ -1,51 +1,51 @@
-# NHL 21 PS4 Port for Windows
+# NHL 20 PS4 Port for Windows
 
-This project runs the **PS4 version** of *EA SPORTS NHL 21* natively on Windows. It isn't an emulator
+This project runs the **PS4 version** of *EA SPORTS NHL 20* natively on Windows. It isn't an emulator
 running a whole console. It loads the game's own x86-64 code directly, gives it Windows versions of
 the PS4 system libraries it calls, and translates its graphics to Vulkan.
 
-NHL 21 was the last NHL on EA's Ignite engine, the same engine as NHL 19 and UFC 3, so this port
-starts from the [NHL 19 port](https://github.com/thegh0sts/NHL-19-PS4-PORT-WINDOWS) (itself a fork of
-[GNSB's UFC 3 port](https://github.com/GNSB/UFC-3-PS4-PORT-LINUX-WINDOWS)) and inherits its fixes.
+NHL 20 runs on EA's Ignite engine, like NHL 19, NHL 21 and UFC 3, so this port starts from the
+[NHL 21 port](https://github.com/thegh0sts/NHL-21-PS4-PORT), which grew from the
+[NHL 19 port](https://github.com/thegh0sts/NHL-19-PS4-PORT-WINDOWS) (itself a fork of
+[GNSB's UFC 3 port](https://github.com/GNSB/UFC-3-PS4-PORT-LINUX-WINDOWS)), and inherits their fixes.
 
 > [!IMPORTANT]
-> This project contains **no game files**. You need your own PS4 copy of the game (**CUSA18182**,
+> This project contains **no game files**. You need your own PS4 copy of the game (**CUSA15439**,
 > with update 1.10), dumped from your own console. Game files, and files made from them such as
 > `boot-linked.bin`, must not be shared.
 
 > [!WARNING]
-> **v0.1.0 is the first test release.** The game boots, plays Play Now matches and creates its mode
-> saves, but most of it hasn't been tested yet. Expect bugs and crashes, and back up your saves. If
+> **v0.1.0 is the first test release.** The game boots and plays Play Now matches, but most of it
+> hasn't been tested yet. Expect bugs and crashes, and back up your saves. If
 > you hit a bug, please report it **with your log and saves**: see
 > [Reporting problems](#reporting-problems).
 
-<!-- Add a screenshot here, e.g. ![NHL 21 in game](docs/screenshot.png) -->
+<!-- Add a screenshot here, e.g. ![NHL 20 in game](docs/screenshot.png) -->
 
 ## Status
 
 The game boots through its menus and team select into Play Now matches, with the arena, players and
-crowd drawn at about 58-60 FPS on a modern PC. Game modes create their saves without a storage
-warning. Everything else is still to be checked.
+crowd drawn correctly. Everything else is still to be checked.
 
 | Area | State |
 |---|---|
 | Boot, menus | Working |
 | Team select | Working (3D players drawn) |
 | Play Now matches | Loads into the match and plays; not tested at length |
-| Game-mode saves (Be a GM, Tournaments...) | Created as on a PS4, without the low-storage warning |
+| Saves | The profile save is created on the first start; game modes not tested yet |
 | Other modes (Franchise, Be a Pro, HUT, World of Chel offline...) | Not tested yet |
-| Graphics details (jerseys, beards, ice, menus' hub tiles) | Not checked yet: NHL 19's settings are used |
-| Frame rate | About 58-60 FPS in menus, team select and the match (the port keeps 60) |
+| Graphics | Arena, players and menus draw correctly with NHL 19's settings |
+| Frame rate | Smooth in menus and matches (the port keeps 60) |
 | Controller | Detected (Xbox controller tested) |
 | Local multiplayer (several controllers) | Not yet |
 | Online play | Not available (see [Online](#online)) |
-| Launcher (`NHL21.exe`) | Working |
+| Launcher (`NHL20.exe`) | Working |
 | Intel CPUs | Working: the game's AMD-only SSE4a instructions are emulated |
 | Linux | Test builds only, not tested by the developer (see [Linux](#linux-test-builds)) |
 
 ## Features
 
-- **Launcher** (`NHL21.exe`) that sets everything up and starts the game:
+- **Launcher** (`NHL20.exe`) that sets everything up and starts the game:
   - checks your game folder, and merges a base game and update dumped separately
   - game language, controller for player 1, player name
   - video: output 720p or 1080p, window or screen size, FSR 1.0 upscaling with sharpening, FPS
@@ -53,10 +53,10 @@ warning. Everything else is still to be checked.
   - developer switches (frame statistics, Vulkan validation, shader cache, logs)
   - a Steam shortcut, and `--play` to start without the window
 - **In-game overlay** (Insert, or L3+R3 on a controller) to change settings while you play
-- **Hold ○ for 2 seconds** on any screen to quit: "Quit NHL 21?", ✕ yes, ○ no
-- The Ignite graphics settings that make NHL 19 draw correctly, applied to NHL 21
+- **Hold ○ for 2 seconds** on any screen to quit: "Quit NHL 20?", ✕ yes, ○ no
+- The Ignite graphics settings that make NHL 19 draw correctly, applied to NHL 20
 
-### What carries over from the NHL 19 port
+### What carries over from the NHL 19 and 21 ports
 
 - **Ignite graphics settings** (precise readbacks, linear readbacks, write windows off, background
   pre-upload on)
@@ -65,22 +65,21 @@ warning. Everything else is still to be checked.
   exception handling (see [How it works](#how-it-works))
 - **Save sizes that add up**, so the game doesn't think its storage is full
 - **Network mode without a server**, which the game needs to get past its start-up offline
-- **System functions added for NHL 24** that NHL 21's newer SDK (7.50) also calls: install-chunk
-  and add-on queries, offline PSN answers, asynchronous file reads, POSIX read/write locks and a
-  few kernel calls
+- **The NHL 21 port's fixes**: the HangMonitor crash fix, the system functions NHL 21 needed for
+  its newer SDK (NHL 20's, 6.50, sits between NHL 19's and NHL 21's), and the Linux test builds
 
 ## Requirements
 
 - Windows 10 or 11, 64-bit
 - A CPU from Intel Haswell (4th generation Core) or newer, or any AMD Ryzen
 - A GPU with Vulkan 1.3 support and an up-to-date driver
-- Your PS4 dump of *NHL 21* with update **1.10**
+- Your PS4 dump of *NHL 20* with update **1.20**
 
 ### Supported version
 
 | Serial | Region | Update | Status |
 |---|---|---|---|
-| **CUSA18182** | Europe (EP0006) | 01.10 | Plays |
+| **CUSA15439** | North America (UP0006) | 01.20 | Plays |
 
 The port recognises the game by a fingerprint of its executable, so other regions or updates are
 refused until they're added. Reports with a dump's serial and version are welcome: you can find
@@ -88,10 +87,10 @@ them in its `sce_sys\param.sfo` (`TITLE_ID`, `APP_VER`).
 
 ## Getting started
 
-1. Download `NHL21Native-windows-x86_64.zip` from the
-   [releases](https://github.com/thegh0sts/NHL-21-PS4-PORT/releases) and unzip it into a folder of its
-   own, outside OneDrive (e.g. `C:\Games\NHL21Native`).
-2. Run **`NHL21.exe`**, pick your game folder with **Browse...** (`CUSA18182`; a `CUSA18182-patch`
+1. Download `NHL20Native-windows-x86_64.zip` from the
+   [releases](https://github.com/thegh0sts/NHL-20-PS4-PORT/releases) and unzip it into a folder of its
+   own, outside OneDrive (e.g. `C:\Games\NHL20Native`).
+2. Run **`NHL20.exe`**, pick your game folder with **Browse...** (`CUSA15439`; a `CUSA15439-patch`
    folder beside it is merged in automatically, with hard links that take no extra space), and
    press **Play**.
 3. The first start prepares the game, which takes a minute or so. The first matches build the
@@ -99,20 +98,20 @@ them in its `sce_sys\param.sfo` (`TITLE_ID`, `APP_VER`).
 
 ### Where your files are
 
-Logs go to the `logs` folder beside `NHL21.exe` (or to `%LOCALAPPDATA%\NHL21Native\logs` if that
+Logs go to the `logs` folder beside `NHL20.exe` (or to `%LOCALAPPDATA%\NHL20Native\logs` if that
 folder can't be written, for example under Program Files; the launcher's Log folder setting picks
-another). Settings, saves and the shader cache live in `%LOCALAPPDATA%\NHL21Native` (paste that
+another). Settings, saves and the shader cache live in `%LOCALAPPDATA%\NHL20Native` (paste that
 into the Explorer address bar). Set `BB_DATA_DIR=.` before starting the launcher to keep everything
 beside the program instead.
 
 ### Updating
 
 Unzip the new release over the old one, or into a new folder. Your settings and saves stay in
-`%LOCALAPPDATA%\NHL21Native`.
+`%LOCALAPPDATA%\NHL20Native`.
 
 ## Linux (test builds)
 
-The code this port grew from also runs on Linux, and NHL 21 test builds for Linux are made by
+The code this port grew from also runs on Linux, and NHL 20 test builds for Linux are made by
 GitHub (`.github/workflows/linux.yml`) as an AppImage and a tar.gz, the same way as the NHL 19
 port's. The developer has no Linux PC, so **these builds have only been compiled, not run**: they're
 published as pre-releases, and reports from anyone who tries them are very welcome. See
@@ -121,7 +120,7 @@ published as pre-releases, and reports from anyone who tries them are very welco
 - Same game fixes and settings as the Windows version, and the AMD-only instruction emulation for
   Intel CPUs. Red-zone protection isn't needed: Linux leaves the stack's red zone alone.
 - No launcher window yet: the game folder is chosen once, and settings are in
-  `~/.local/share/NHL21Native/nhl21.conf`.
+  `~/.local/share/NHL20Native/nhl20.conf`.
 - A test build is made by pushing a tag like `v0.1.0-linux-test1`: the workflow builds it and
   publishes a pre-release with `docs/release-notes/linux-test.md` as its notes. The workflow can
   also be run by hand (Actions > linux > Run workflow) to get the files without a release.
@@ -143,19 +142,19 @@ The port builds natively on Windows with [MSYS2](https://www.msys2.org/)'s **CLA
    ```
 2. Clone and build:
    ```sh
-   git clone --recursive https://github.com/thegh0sts/NHL-21-PS4-PORT.git
-   cd NHL-21-PS4-PORT
+   git clone --recursive https://github.com/thegh0sts/NHL-20-PS4-PORT.git
+   cd NHL-20-PS4-PORT
    bash scripts/build-msys2.sh
    ```
    The first build also builds a few pinned libraries MSYS2 doesn't package (magic_enum, miniz,
    VulkanMemoryAllocator, robin-map, xbyak). Programs and their DLLs go to `out/windows/bin`.
    `BB_LTO=ON` gives a slower build and a faster game.
-3. Either package it (`bash scripts/package-msys2.sh` makes `dist/NHL21Native-windows-x86_64.zip`
-   with `NHL21.exe`), or run it straight from the repo: put your game dump in `nhl21\` inside the
+3. Either package it (`bash scripts/package-msys2.sh` makes `dist/NHL20Native-windows-x86_64.zip`
+   with `NHL20.exe`), or run it straight from the repo: put your game dump in `nhl20\` inside the
    repo (it's in `.gitignore`, so it's never committed), then
    ```sh
-   bash scripts/run-msys2.sh nhl21
-   BB_SKIP_PREPARE=1 bash scripts/run-msys2.sh nhl21   # later runs: skip the preparation
+   bash scripts/run-msys2.sh nhl20
+   BB_SKIP_PREPARE=1 bash scripts/run-msys2.sh nhl20   # later runs: skip the preparation
    ```
    The whole log goes to `out/run.txt` as well as the terminal.
 
@@ -172,14 +171,14 @@ had uncommitted changes. To make a release, tag the commit, build and package, t
 ```sh
 git tag v0.1.0 && git push origin v0.1.0
 bash scripts/build-msys2.sh && bash scripts/package-msys2.sh
-gh release create v0.1.0 dist/NHL21Native-windows-x86_64.zip --title "NHL 21 port v0.1.0" --notes-file docs/release-notes/v0.1.0.md
+gh release create v0.1.0 dist/NHL20Native-windows-x86_64.zip --title "NHL 20 port v0.1.0" --notes-file docs/release-notes/v0.1.0.md
 ```
 
 ### Settings for testing
 
-`run-msys2.sh` and the launcher set NHL 21's defaults (for now the same as NHL 19's). Any of them
+`run-msys2.sh` and the launcher set NHL 20's defaults (the same as NHL 19's and NHL 21's). Any of them
 can be changed for one run by putting it in front of the command, for example
-`BB_FLIP_RATE=-1 BB_SKIP_PREPARE=1 bash scripts/run-msys2.sh nhl21`.
+`BB_FLIP_RATE=-1 BB_SKIP_PREPARE=1 bash scripts/run-msys2.sh nhl20`.
 
 | Variable | Default | Effect |
 |---|---|---|
@@ -189,7 +188,7 @@ can be changed for one run by putting it in front of the command, for example
 | `BB_FLIP_RATE` | 0 | 0: 60 FPS throughout. `-1`: the game's own choice (30 FPS in matches, as on a PS4) |
 | `BB_ONLINE_SERVER` | 127.0.0.1 | The network mode without a server. Empty (`BB_ONLINE_SERVER=`) turns it off |
 | `BB_REDZONE_SHIFT` | on | Red-zone protection. `0` turns it off, for comparison |
-| `BB_HOLD_CIRCLE_QUIT` | 1 | Holding ○ for 2 seconds asks "Quit NHL 21?". `0` turns it off |
+| `BB_HOLD_CIRCLE_QUIT` | 1 | Holding ○ for 2 seconds asks "Quit NHL 20?". `0` turns it off |
 | `BB_SSE4A_LOG=1` | off | Logs each emulated AMD-only instruction |
 | `BB_LOG_UNRESOLVED=1` | off | Logs every unhandled system call (very large logs) |
 | `BB_FRAME_STATS=1` | off | Frame timing in the log |
@@ -202,7 +201,7 @@ how much of it the port already provides.
 1. **Preparation** (`scripts/prepare.py`, `link_libc.py`, `link_modules.py`) reads the game's
    `eboot.bin` and links it with the PS4 libraries the game ships (`libc.prx`, `libSceFios2.prx`)
    into one image, `boot-linked.bin`. `game_check.py` identifies the game by a fingerprint of its
-   executable (profile `nhl21`), `gen_import_names.py` names the system functions it imports, and
+   executable (profile `nhl20`), `gen_import_names.py` names the system functions it imports, and
    `content_profile.py` records its content details. The launcher runs these on each start.
 2. **The loader** (`sacredfire-game.exe`, `src/`) maps that image into memory and runs the game's
    code natively. Each call into a PS4 system library (kernel, threads, files, saves, pads, audio,
@@ -210,7 +209,7 @@ how much of it the port already provides.
 3. **Red-zone protection:** PS4 code may keep data in the 128 bytes just below its stack pointer.
    Windows writes its exception information there whenever an instruction faults, and the port's
    GPU memory tracking makes the game fault often, on purpose. At start-up the loader moves the
-   game's red-zone accesses 64 KiB lower, out of reach (about 11,600 in NHL 21), leaving
+   game's red-zone accesses 64 KiB lower, out of reach (about 11,750 in NHL 20), leaving
    stack-switching code alone.
 4. **AMD-only instructions:** the PS4's CPU has AMD's SSE4a extension, which Intel CPUs lack. When
    the game uses one, the loader catches the error and carries out the instruction itself
@@ -225,10 +224,10 @@ an issue with:
 
 - your CPU, GPU and driver version, and Windows version
 - what happened, in which mode and where (menu, face-off, intermission...), and what you were doing
-- the log of that session: the newest file in the `logs` folder beside `NHL21.exe` (or
+- the log of that session: the newest file in the `logs` folder beside `NHL20.exe` (or
   `out/run.txt` when running from the repo)
 - **your saves**, so the bug can be reproduced: zip the `user` folder in
-  `%LOCALAPPDATA%\NHL21Native` (or in the repo); the `cache` folder inside can be left out, it's
+  `%LOCALAPPDATA%\NHL20Native` (or in the repo); the `cache` folder inside can be left out, it's
   only the shader cache
 
 Please don't attach game files or anything from the `out` folder other than `run.txt`: they're made
@@ -236,45 +235,38 @@ from the game and can't be shared. Saves are fine to share: they hold only your 
 
 ## Version history
 
-### v0.1.1 (2026-11-14)
+### v0.1.0 (2026-11-15)
 
-- Fixed a crash while loading: when the game's watchdog (HangMonitor) noticed a slow thread, it
-  read that thread's stack at the wrong address, because the port didn't report where thread
-  stacks are. The real addresses are now reported
-
-### v0.1.0 (2026-11-11)
-
-First test release of the NHL 21 port.
+First test release of the NHL 20 port.
 
 **Game**
-- Boots through the menus and team select into Play Now matches at about 58-60 FPS
-- Game modes create their saves as on a PS4, without a low-storage warning (Be a GM tested)
-- **Hold ○ for 2 seconds to quit:** a "Quit NHL 21?" box appears on any screen; ✕ (or Enter) quits,
+- Boots through the menus into Play Now matches; the profile save is created as on a PS4
+- **Hold ○ for 2 seconds to quit:** a "Quit NHL 20?" box appears on any screen; ✕ (or Enter) quits,
   ○ (or Esc) goes back to the game. A short press of ○ still goes back a screen as usual.
   `BB_HOLD_CIRCLE_QUIT=0` turns it off
 
 **Launcher**
-- `NHL21.exe`: checks for NHL 21 CUSA18182 with the 1.10 update (merging a separate update folder
-  automatically), and starts it with NHL 21's settings
-- Settings and saves in `%LOCALAPPDATA%\NHL21Native`; logs in a `logs` folder beside `NHL21.exe`
+- `NHL20.exe`: checks for NHL 20 CUSA15439 with the 1.20 update (merging a separate update folder
+  automatically), and starts it with NHL 20's settings
+- Settings and saves in `%LOCALAPPDATA%\NHL20Native`; logs in a `logs` folder beside `NHL20.exe`
 
 **Under the hood**
-- Started from the NHL 19 port (v0.2.1): red-zone protection, precise readbacks, 60 FPS throughout,
-  realistic save sizes, the depth/stencil crash fix from NHL 19's Be a GM
-- `nhl21` profile: NHL 21 CUSA18182 (EU) 1.10 recognised by a fingerprint of its executable
-- System functions from the NHL 24 port for NHL 21's SDK 7.50
+- Started from the NHL 21 port (v0.1.1): red-zone protection, precise readbacks, 60 FPS throughout,
+  realistic save sizes, the depth/stencil and HangMonitor fixes, Linux test builds
+- `nhl20` profile: NHL 20 CUSA15439 (North America) 1.20 recognised by a fingerprint of its
+  executable; the base game (1.00) is recognised as missing the update
 
 **Known issues**
 - Most modes, and matches played to the end, are untested
-- Graphics details (jerseys, beards, hub tiles) not checked yet
-- One local player only; no online play; only the European 1.10 version is recognised
+- The first match after a new install opens on a black screen while the shader cache is built
+- One local player only; no online play; only the North American 1.20 version is recognised
 
 ## Credits
 
 This port is built on the work of:
 
-- The **[NHL 19 port](https://github.com/thegh0sts/NHL-19-PS4-PORT-WINDOWS)**, which this project
-  starts from
+- The **[NHL 21 port](https://github.com/thegh0sts/NHL-21-PS4-PORT)**, which this project starts
+  from, and the **[NHL 19 port](https://github.com/thegh0sts/NHL-19-PS4-PORT-WINDOWS)** it grew from
 - **[GNSB](https://github.com/GNSB/UFC-3-PS4-PORT-LINUX-WINDOWS)**'s UFC 3 port, which the NHL 19
   port is a fork of
 - **SacredFire** (T3CHNOLOG1C): the loader and launcher the UFC 3 port grew from

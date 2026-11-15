@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 here=$(cd -- "$(dirname -- "$0")" && pwd)
-# No bytecode writes into the read-only mounted payload; everything else is nhl21.sh's.
+# No bytecode writes into the read-only mounted payload; everything else is nhl20.sh's.
 export PYTHONDONTWRITEBYTECODE=1
-exec "$here/usr/lib/NHL21Native/nhl21.sh" "$@"
+exec "$here/usr/lib/NHL20Native/nhl20.sh" "$@"

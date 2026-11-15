@@ -47,7 +47,7 @@ if [[ -z ${PYTHON:-} ]]; then
 fi
 if [[ -z ${PYTHON:-} ]]; then echo 'Install Python 3 or set PYTHON.' >&2; exit 1; fi
 # BB_GAME_DIR: the game's folder (eboot.bin, sce_module, ...), with the update merged in
-# (scripts/merge_update.py; packaging/linux/nhl21.sh does it); default: ./nhl20.
+# (scripts/merge_update.py; packaging/linux/nhl20.sh does it); default: ./nhl20.
 game=${BB_GAME_DIR:-nhl20}
 if [[ ! -f $game/eboot.bin ]]; then echo "No eboot.bin in $game (set BB_GAME_DIR)." >&2; exit 1; fi
 # The game check (scripts/game_check.py) compares the executable image with the supported one
@@ -67,8 +67,8 @@ PY
 ) || true
 title=${title:-CUSA06534} app_version=${app_version:-01.14} modules=${modules:-libc.prx libSceFios2.prx}
 echo "Game profile: $BB_GAME_PROFILE ($title $app_version), modules: $modules"
-# NHL 19 and NHL 21 (the settings of the Windows launchers and scripts/run-msys2.sh, tested there
-# in NHL 19 and used as they are in NHL 21):
+# NHL 19 and NHL 20 (the settings of the Windows launchers and scripts/run-msys2.sh, tested there
+# in NHL 19 and used as they are in NHL 20):
 #  - the network mode without a server (BB_ONLINE_SERVER=127.0.0.1): with the runtime's offline
 #    answers the sim thread reads an online-service object that was never made; nothing listens
 #    at that address, so the game finds no EA servers and plays offline. Empty turns it off.
@@ -77,7 +77,7 @@ echo "Game profile: $BB_GAME_PROFILE ($title $app_version), modules: $modules"
 #  - write windows and stepped writes off (the jerseys shake), pre-upload on (main menu tiles).
 #  - 60 FPS throughout at a 60 Hz vblank (BB_FLIP_RATE=-1: the game's own 30 in matches).
 #  - its own intro videos; command-buffer copies left to the runtime's default (as on Windows).
-if [[ $BB_GAME_PROFILE == nhl19 || $BB_GAME_PROFILE == nhl20 || $BB_GAME_PROFILE == nhl21 ]]; then
+if [[ $BB_GAME_PROFILE == nhl19 || $BB_GAME_PROFILE == nhl20 || $BB_GAME_PROFILE == nhl20 ]]; then
     [[ -n ${BB_ONLINE_SERVER+set} ]] || export BB_ONLINE_SERVER=127.0.0.1
     export BB_READBACKS=${BB_READBACKS:-2} BB_READBACK_LINEAR=${BB_READBACK_LINEAR:-1} BB_GPU_WRITE_TWINS=${BB_GPU_WRITE_TWINS:-0}
     export BB_WRITE_WINDOW=${BB_WRITE_WINDOW:-0} BB_WRITE_STEP=${BB_WRITE_STEP:-0} BB_PREUPLOAD=${BB_PREUPLOAD:-1}
@@ -241,7 +241,7 @@ export BB_UFFD=${BB_UFFD:-0}
 # The command buffers of each submission are copied when the game submits them and decoded from
 # the copy: while an area loads the game reused that memory before the GPU thread got to it
 # ("Unimplemented PM4 type 0" a few seconds after loading a save). 0 decodes guest memory.
-[[ $BB_GAME_PROFILE == nhl19 || $BB_GAME_PROFILE == nhl20 || $BB_GAME_PROFILE == nhl21 ]] || export BB_COPY_GPU_BUFFERS=${BB_COPY_GPU_BUFFERS:-1}
+[[ $BB_GAME_PROFILE == nhl19 || $BB_GAME_PROFILE == nhl20 || $BB_GAME_PROFILE == nhl20 ]] || export BB_COPY_GPU_BUFFERS=${BB_COPY_GPU_BUFFERS:-1}
 # A guest write next to small GPU outputs the GPU is still writing (counters, compute results,
 # up to BB_GPU_WRITE_TWINS_MAX bytes per page) does not wait for the GPU (BufferCache twins).
 export BB_GPU_WRITE_TWINS=${BB_GPU_WRITE_TWINS:-1} BB_GPU_WRITE_TWINS_MAX=${BB_GPU_WRITE_TWINS_MAX:-65536}
