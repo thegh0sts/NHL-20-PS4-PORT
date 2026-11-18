@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <tuple>
 #include <set>
 // SPDX-FileCopyrightText: Copyright 2024-2026 shadPS4 Emulator Project
@@ -105,9 +106,44 @@ bool SkipShader(u64 hash) {
 bool T4TraceEnabled() {
     static const bool enabled = [] {
         const char* env = std::getenv("BB_T4_TRACE");
-        return env && env[0] == '1';
+        return env && (env[0] == '1' || env[0] == '2');
     }();
     return enabled;
+}
+// BB_T4_TRACE=2: every draw, from the moment the file named by BB_T4_TRIGGER (default out/t4)
+// appears (deleted when seen), for the next 4096 draws: the HUD's stencil and scissor state.
+bool T4AllTargets() {
+    static const bool all = [] {
+        const char* env = std::getenv("BB_T4_TRACE");
+        return env && env[0] == '2';
+    }();
+    return all;
+}
+bool T4Triggered() {
+    static bool armed = false;
+    static u32 poll = 0;
+    if (armed) return true;
+    if (poll++ % 512) return false;
+    // BB_T4_AFTER=<seconds>: arm by itself that long after the first draw (no trigger file).
+    static const long after = [] {
+        const char* e = std::getenv("BB_T4_AFTER");
+        return e ? std::strtol(e, nullptr, 10) : 0L;
+    }();
+    static const auto start = std::chrono::steady_clock::now();
+    if (after > 0 && std::chrono::steady_clock::now() - start >= std::chrono::seconds(after)) {
+        armed = true;
+        std::printf("[T4] trace armed (%ld s after the first draw)\n", after);
+        return true;
+    }
+    const char* trigger = std::getenv("BB_T4_TRIGGER");
+    const std::string path = trigger ? trigger : "out/t4";
+    std::error_code ec;
+    if (std::filesystem::exists(path, ec)) {
+        std::filesystem::remove(path, ec);
+        armed = true;
+        std::printf("[T4] trace armed (%s)\n", path.c_str());
+    }
+    return armed;
 }
 
 bool T4PortraitTarget(const VideoCore::ImageInfo& info) {
@@ -4211,12 +4247,16 @@ RenderState Rasterizer::BeginRenderingFull(const GraphicsPipeline* pipeline) {
 void Rasterizer::TraceT4Draw(const GraphicsPipeline* pipeline, const RenderState& state,
                               bool indirect) {
     if (!T4TraceEnabled()) return;
-    bool portrait = false;
-    for (u32 cb = 0; cb < state.num_color_attachments; ++cb) {
-        if (cb_descs[cb].first &&
-            T4PortraitTarget(texture_cache.GetImage(cb_descs[cb].first).info)) portrait = true;
+    if (T4AllTargets()) {
+        if (!T4Triggered()) return;
+    } else {
+        bool portrait = false;
+        for (u32 cb = 0; cb < state.num_color_attachments; ++cb) {
+            if (cb_descs[cb].first &&
+                T4PortraitTarget(texture_cache.GetImage(cb_descs[cb].first).info)) portrait = true;
+        }
+        if (!portrait) return;
     }
-    if (!portrait) return;
     // Recording thread only. Preserve draw order, including repeated shaders/clears.
     static u32 count = 0;
     if (count >= 4096) return;
@@ -4258,6 +4298,10 @@ void Rasterizer::TraceT4Draw(const GraphicsPipeline* pipeline, const RenderState
                               i, sc.offset.x, sc.offset.y, sc.extent.width, sc.extent.height);
     }
     if (dynamic.stencil_test_enabled) {
+        detail += fmt::format(" stencil_ops=fail:{}:pass:{}:zfail:{}",
+                              vk::to_string(dynamic.stencil_front_ops.fail_op),
+                              vk::to_string(dynamic.stencil_front_ops.pass_op),
+                              vk::to_string(dynamic.stencil_front_ops.depth_fail_op));
         detail += fmt::format(" stencil_front={}:ref{:#x}:read{:#x}:write{:#x} "
                               "stencil_back={}:ref{:#x}:read{:#x}:write{:#x}",
                               vk::to_string(dynamic.stencil_front_ops.compare_op),
