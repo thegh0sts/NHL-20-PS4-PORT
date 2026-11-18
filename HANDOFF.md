@@ -66,30 +66,26 @@ Release notes: `docs/release-notes/`. **v0.1.2 is not made yet** (see Next steps
   against the game image). Log line: "Red zone: 308 accesses in 29 functions stay where they are…".
   Tested in game on 2026-11-18 (runs fine; the HUD bug below is unrelated).
 
-## Open bug: the bottom of the match screen
+## Not a bug: the strip at the bottom of the match screen
 
-- Symptom (in matches, 4K screen, v0.1.1 and later builds): the picture stops about 5% short of
-  the bottom (y≈1368 of 1440 on a 2560x1440 screenshot). Below it there's a black strip with **7
-  yellow boxes** labelled "show", "warn", "b/warn", "drop", "b/drop", "comp", "b/comp". NHL 20's
-  score clock sits at the bottom centre: its top (team logos, "AVS") is cut off at the same line.
-- Not the cause:
-  - the red-zone changes: the boxes stay with every version of `runtime_fp.c`;
-  - the upscaler: the boxes show with FSR 1.0 both on and off;
-  - the safe area: the port reports 1.0 (`runtime_services.c`).
-- Draw trace (`out/run.txt` from 2026-11-18 17:43, tick 26295):
-  - the 3D scene renders at **1600x900** (dynamic resolution), full size, nothing cut off;
-  - the HUD is drawn on its own **1920x1080 R8G8B8A8** layer at `0x108d940000`, cleared to
-    transparent each frame;
-  - HUD masks use stencil on D32S8 `0x108cdc0000` in three steps: clear (Replace, Always, ref 0),
-    mark (IncrementAndWrap, Equal 0), then content (LessOrEqual ref 1). All reach Vulkan as asked;
-  - viewports and scissors are the full target everywhere.
-  - So the masks, scissors and HUD layer look right. The cut must happen where the game puts the
-    1600x900 scene and the HUD layer together into the 1920x1080 frame: a **compute pass**, which the
-    draw trace doesn't record.
-- Ideas still open:
-  - the compositing pass reads the scene with the wrong size or scale;
-  - the boxes come from the score clock's own graphics, normally hidden. To check, set Score Clock
-    Overlay (Settings → Visual) to Small, then to Off: if the strip changes, they're the score clock.
+- What it looked like: in matches, the picture seemed to stop about 5% short of the bottom.
+  Underneath was a black strip with 7 yellow boxes labelled "show", "warn", "b/warn", "drop",
+  "b/drop", "comp", "b/comp", and it cut into the bottom of the score clock.
+- Cause: NHL 20 assumes a TV that crops the edges of the picture (overscan). By default the score
+  clock sits high and the panel below it is meant to be off-screen; a PC monitor shows it.
+- Fix, in the game: **Settings → Calibration → Score Clock Calibration**. Press down until the
+  yellow bar is gone, then confirm. The value is saved with the profile.
+- How it was found (2026-11-18):
+  - draw trace and frame capture: masks, scissors and the HUD layer were drawn as the game asked;
+  - live shader skips (`BB_SKIP_FILE`): the panel is HUD shaders `b8aeee04` and `1a3e7913`, and
+    its labels come from the other HUD text shaders.
+- Ruled out as causes on the way: the red-zone changes, the upscaler, the safe area, compositing.
+- If it should work without the player doing anything, two options:
+  - write the calibration into the profile save (where the value is stored isn't known yet);
+  - make those two shaders a built-in skip for NHL 20, as a stopgap. The labels stay visible
+    unless the score clock is moved down.
+- `BB_ONLINE_SERVER=` (network mode off) is not usable: the game crashes after the splash screen
+  (read of 0x760 in SimThread, guest offset 0x3095d50), as NHL 19 did.
 
 ## Diagnostics in this build
 
@@ -124,14 +120,10 @@ The same `src/runtime_fp.c` is in NHL 19 (`NHL-19-PS4-PORT-WINDOWS`), NHL 21, NH
 
 ## Next steps
 
-1. Commit the uncommitted work:
-   - `src/runtime_fp.c`: the improved red-zone fix;
-   - `vk_rasterizer.cpp`: the trace, which is off unless `BB_T4_TRACE=2`.
-2. Score-clock bug:
-   - run the frame capture above at a faceoff with the boxes on screen;
-   - find the compute pass that writes the presented frame;
-   - check what it reads (the 1600x900 scene, the HUD layer `0x108d940000`) and with what size;
-   - also try the Score Clock Overlay setting.
-3. Release v0.1.2 (improved red-zone fix, plus the HUD fix if found), with notes in
+1. Tell players about Score Clock Calibration: add a note to the README and to the v0.1.2 release
+   notes.
+2. Release v0.1.2 (improved red-zone fix, already committed in 455a0b5), with notes in
    `docs/release-notes/v0.1.2.md`.
-4. Fix the README warning box (1.10 → 1.20).
+3. Fix the README warning box (1.10 → 1.20).
+4. Commit and release the improved red-zone fix in the other ports: NHL 19, NHL 24 and Madden
+   (NHL 21: v0.1.2 waits to be built).
